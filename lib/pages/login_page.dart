@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:notes_app/pages/home_page.dart';
+import 'package:notes_app/utils/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,6 +11,35 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool isPasswordExist = false;
+  String? _password;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    String? password = UserSharedPreferences.getPassword();
+
+    if (password != null) {
+      setState(() {
+        isPasswordExist = true;
+        _password = password;
+      });
+
+      super.initState();
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 20),
                   ),
                   TextField(
+                    controller: _usernameController,
                     autofocus: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -48,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 20),
                   ),
                   TextField(
-                    autofocus: true,
+                    controller: _passwordController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -57,12 +89,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.login),
-                      label: Text("Login"),
+                      onPressed: () async {
+                        await UserSharedPreferences.setUsername(
+                            username: _usernameController.text,
+                            password: _passwordController.text);
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.login),
+                      label: const Text("Login"),
                     ),
                   ),
                 ],

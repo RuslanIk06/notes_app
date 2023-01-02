@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/pages/login_page.dart';
+import 'package:notes_app/utils/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await UserSharedPreferences.init();
   runApp(const MyApp());
 }
 
