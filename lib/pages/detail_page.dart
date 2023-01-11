@@ -51,7 +51,10 @@ class _DetailPageState extends State<DetailPage> {
           ),
           const SizedBox(width: 8),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              await NotesDatabase.instance.delete(widget.note.id!);
+              Navigator.of(context).pop();
+            },
             icon: const Icon(Icons.delete),
           ),
           const SizedBox(width: 16),
