@@ -18,8 +18,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     String? password = UserSharedPreferences.getPassword();
 
     if (password != null) {
@@ -34,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _usernameController.dispose();
     _passwordController.dispose();

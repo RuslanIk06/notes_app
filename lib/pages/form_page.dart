@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:notes_app/models/note.dart';
 import 'package:notes_app/utils/notes_database.dart';
 
 class FormPage extends StatefulWidget {
-  const FormPage({super.key});
+  final Note? note;
+  const FormPage({
+    Key? key,
+    this.note,
+  }) : super(key: key);
 
   @override
   State<FormPage> createState() => _FormPageState();
@@ -12,6 +17,15 @@ class FormPage extends StatefulWidget {
 class _FormPageState extends State<FormPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.note != null) {
+      titleController.text = widget.note!.title;
+      descController.text = widget.note!.description;
+    }
+    super.initState();
+  }
 
   Future addNote() async {
     final note = Note(
@@ -23,11 +37,19 @@ class _FormPageState extends State<FormPage> {
     await NotesDatabase.instance.create(note);
   }
 
+  Future updateNote() async {
+    final note = widget.note!.copyWith(
+      title: titleController.text,
+      description: descController.text,
+    );
+    await NotesDatabase.instance.update(note);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Form"),
+        title: const Text("Form"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -82,7 +104,12 @@ class _FormPageState extends State<FormPage> {
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
-                  addNote();
+                  if (widget.note != null) {
+                    updateNote();
+                  } else {
+                    addNote();
+                  }
+
                   Navigator.of(context).pop();
                 });
               },

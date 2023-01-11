@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/models/note.dart';
+import 'package:notes_app/pages/detail_page.dart';
 import 'package:notes_app/pages/form_page.dart';
 import 'package:notes_app/utils/notes_database.dart';
 import 'package:notes_app/widgets/card_widget.dart';
@@ -51,14 +52,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     refreshNote();
     super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     NotesDatabase.instance.close();
   }
@@ -72,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16),
               child: GridView.builder(
@@ -80,7 +79,22 @@ class _HomePageState extends State<HomePage> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8),
                 itemBuilder: (context, index) {
-                  return CardWidget(index: index, notes: notes[index]);
+                  return InkWell(
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => DetailPage(
+                            note: notes[index],
+                          ),
+                        ),
+                      );
+                      refreshNote();
+                    },
+                    child: CardWidget(
+                      index: index,
+                      notes: notes[index],
+                    ),
+                  );
                 },
               ),
             ),
@@ -88,7 +102,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => FormPage(),
+              builder: (context) => const FormPage(),
             ),
           );
           refreshNote();
